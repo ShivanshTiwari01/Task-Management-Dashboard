@@ -68,13 +68,15 @@ export const getTasks = async (req: Request, res: Response) => {
 };
 
 export const createTask = async (req: Request, res: Response) => {
-  const { title, description, status, userId } = req.body;
+  const { title, description, status, priority, assignee, userId } = req.body;
   try {
     const newTask = await prisma.task.create({
       data: {
         title,
         description,
-        status,
+        status: status || 'todo',
+        priority: priority || 'medium',
+        assignee,
         userId,
       },
     });
@@ -88,7 +90,7 @@ export const createTask = async (req: Request, res: Response) => {
 export const updateTask = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { title, description, status } = req.body;
+    const { title, description, status, priority, assignee } = req.body;
 
     const existingTask = await prisma.task.findUnique({
       where: { id: Number(id) },
@@ -100,7 +102,7 @@ export const updateTask = async (req: Request, res: Response) => {
 
     const updatedTask = await prisma.task.update({
       where: { id: Number(id) },
-      data: { title, description, status },
+      data: { title, description, status, priority, assignee },
     });
 
     return res.json(updatedTask);
