@@ -29,11 +29,11 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/api', apiRouter);
-
 app.get('/', (req: Request, res: Response) => {
   res.send('Unauthorized access is prohibited.');
 });
+
+app.use('/api', apiRouter);
 
 app.use((err: Error, req: Request, res: Response, next: any) => {
   console.error(`[${new Date().toISOString()}] ERROR:`, {
