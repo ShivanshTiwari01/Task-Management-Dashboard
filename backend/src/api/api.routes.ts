@@ -13,6 +13,6 @@ router.put('/update/task/:id', controller.updateTask);
 
 router.delete('/delete/task/:id', controller.deleteTask);
 
-router.patch('/update/status', controller.updateTaskStatus);
+router.patch('/update/task/status', controller.updateTaskStatus);
 
 export default router;
