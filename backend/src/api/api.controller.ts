@@ -45,9 +45,7 @@ export const getTasks = async (req: Request, res: Response) => {
   try {
     const { userId } = req.query;
     if (!userId) {
-      return res
-        .status(400)
-        .json({ error: 'userId query parameter is required' });
+      return res.status(400).json({ error: 'userId is required' });
     }
     const existingUser = await prisma.user.findUnique({
       where: { id: Number(userId) },
@@ -131,6 +129,32 @@ export const deleteTask = async (req: Request, res: Response) => {
     return res.status(204).send();
   } catch (error) {
     console.error('Error deleting task:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+export const updateTaskStatus = async (req: Request, res: Response) => {
+  try {
+    const { id, status } = req.query;
+
+    const existingTask = await prisma.task.findUnique({
+      where: {
+        id: Number(id),
+      },
+    });
+
+    if (!existingTask) {
+      return res.status(404).json({ message: 'Task not found' });
+    }
+
+    await prisma.task.update({
+      where: { id: Number(id) },
+      data: {
+        status: status as string,
+      },
+    });
+  } catch (error) {
+    console.error('Error updating status: ', error);
     return res.status(500).json({ error: 'Internal server error' });
   }
 };
