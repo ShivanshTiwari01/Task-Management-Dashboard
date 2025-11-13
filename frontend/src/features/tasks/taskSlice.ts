@@ -86,6 +86,23 @@ export const deleteTask = createAsyncThunk(
   }
 );
 
+export const updateTaskStatus = createAsyncThunk(
+  'task/status/update',
+  async (
+    { id, status }: { id: string; status: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const task = await TaskAPI.updateStatus(Number(id), status);
+      return task;
+    } catch (error) {
+      return rejectWithValue(
+        error?.response?.data?.message || 'Failed to update status'
+      );
+    }
+  }
+);
+
 const slice = createSlice({
   name: 'tasks',
   initialState: {
@@ -128,6 +145,9 @@ const slice = createSlice({
       })
       .addCase(deleteTask.fulfilled, (state, action) => {
         state.items = state.items.filter((t) => t.id !== action.payload);
+      })
+      .addCase(updateTaskStatus.fulfilled, (state, action) => {
+        const idx = state.items.findIndex((t) => t.id === action.payload.id);
       });
   },
 });

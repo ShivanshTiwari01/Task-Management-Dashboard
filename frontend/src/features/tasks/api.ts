@@ -50,6 +50,12 @@ export const TaskAPI = {
     const { data } = await api.delete(`/delete/task/${id}`);
     return data;
   },
+  async updateStatus(id: number, status: string) {
+    const { data } = await api.patch(`/update/task/status`, {
+      params: { id, status },
+    });
+    return data;
+  },
 };
 
 export default api;

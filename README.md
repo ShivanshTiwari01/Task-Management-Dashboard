@@ -1,6 +1,6 @@
 # Task Management Dashboard
 
-A modern, full-stack task management application built with React, TypeScript, Redux Toolkit, Express, and Prisma ORM with PostgreSQL.
+A modern, full-stack task management application built with React, TypeScript, Redux Toolkit, Node, Express, and Prisma ORM with PostgreSQL.
 
 ## 📋 Table of Contents
 
@@ -12,12 +12,6 @@ A modern, full-stack task management application built with React, TypeScript, R
 - [Configuration](#configuration)
 - [Running the Application](#running-the-application)
 - [API Documentation](#api-documentation)
-- [Frontend Architecture](#frontend-architecture)
-- [Backend Architecture](#backend-architecture)
-- [Database Schema](#database-schema)
-- [Development](#development)
-- [Build & Deployment](#build--deployment)
-- [Troubleshooting](#troubleshooting)
 
 ## ✨ Features
 
