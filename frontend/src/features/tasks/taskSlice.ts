@@ -29,7 +29,13 @@ export const fetchTasks = createAsyncThunk(
 export const addTask = createAsyncThunk(
   'tasks/add',
   async (
-    payload: { title: string; description: string },
+    payload: {
+      title: string;
+      description: string;
+      priority: string;
+      assignee: string;
+      status: string;
+    },
     { rejectWithValue }
   ) => {
     try {
@@ -107,12 +113,12 @@ const slice = createSlice({
   name: 'tasks',
   initialState: {
     items: [],
-    filters: { q: '', priority: 'all', assignee: 'all' },
+    filters: { query: '', priority: 'all', assignee: 'all' },
     meta: { loading: false, error: null },
   },
   reducers: {
     setQuery(state, action) {
-      state.filters.q = action.payload;
+      state.filters.query = action.payload;
     },
     setPriority(state, action) {
       state.filters.priority = action.payload;
@@ -148,6 +154,7 @@ const slice = createSlice({
       })
       .addCase(updateTaskStatus.fulfilled, (state, action) => {
         const idx = state.items.findIndex((t) => t.id === action.payload.id);
+        if (idx !== -1) state.items[idx] = action.payload;
       });
   },
 });
@@ -155,33 +162,34 @@ const slice = createSlice({
 export const { setQuery, setPriority, setAssignee } = slice.actions;
 export default slice.reducer;
 
-// Selectors
 const selectItems = (s) => s.tasks.items;
 const selectFilters = (s) => s.tasks.filters;
 export const selectMeta = (s) => s.tasks.meta;
 
 export const selectFilteredTasks = createSelector(
   [selectItems, selectFilters],
-  (items, f) => {
-    const q = f.q.trim().toLowerCase();
-    const byText = q
+  (items, filters) => {
+    const query = (filters.query || '').trim().toLowerCase();
+    const filteredByText = query
       ? items.filter((t) =>
-          (t.title + ' ' + t.description).toLowerCase().includes(q)
+          (t.title + ' ' + t.description).toLowerCase().includes(query)
         )
       : items;
-    const byPriority =
-      f.priority === 'all'
-        ? byText
-        : byText.filter((t) => t.priority === f.priority);
-    const byAssignee =
-      f.assignee === 'all'
-        ? byPriority
-        : byPriority.filter((t) => t.assignee === f.assignee);
+    const filteredByPriority =
+      filters.priority === 'all'
+        ? filteredByText
+        : filteredByText.filter((t) => t.priority === filters.priority);
+    const filteredByAssignee =
+      filters.assignee === 'all'
+        ? filteredByPriority
+        : filteredByPriority.filter((t) => t.assignee === filters.assignee);
 
     return {
-      todo: byAssignee.filter((t) => t.status === 'todo'),
-      'in-progress': byAssignee.filter((t) => t.status === 'in-progress'),
-      done: byAssignee.filter((t) => t.status === 'done'),
+      todo: filteredByAssignee.filter((t) => t.status === 'todo'),
+      'in-progress': filteredByAssignee.filter(
+        (t) => t.status === 'in-progress'
+      ),
+      done: filteredByAssignee.filter((t) => t.status === 'done'),
     };
   }
 );

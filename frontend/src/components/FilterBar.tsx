@@ -9,6 +9,7 @@ import { Search, Filter } from 'lucide-react';
 
 export default function FiltersBar() {
   const dispatch = useDispatch();
+
   const items = useSelector((s) => s.tasks.items);
   const filters = useSelector((s) => s.tasks.filters);
 
@@ -33,7 +34,7 @@ export default function FiltersBar() {
             <input
               className='input pl-10 w-full'
               placeholder='Search by title or description...'
-              value={filters.q}
+              value={filters.query}
               onChange={(e) => dispatch(setQuery(e.target.value))}
               style={{ paddingLeft: '2.5rem' }}
             />
