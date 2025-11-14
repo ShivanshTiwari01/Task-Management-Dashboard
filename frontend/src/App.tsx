@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Plus, LayoutDashboard, LogOut } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import {
   fetchTasks,
   selectFilteredTasks,
@@ -8,13 +10,18 @@ import {
 import TaskBoard from './components/TaskBoard';
 import TaskDialog from './components/TaskDialog';
 import FiltersBar from './components/FilterBar';
-import { Plus, LayoutDashboard } from 'lucide-react';
 
 export default function App() {
   const dispatch = useDispatch();
   const tasksByStatus = useSelector(selectFilteredTasks);
   const meta = useSelector(selectMeta);
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('userId');
+    navigate('/', { replace: true });
+  };
 
   useEffect(() => {
     dispatch(fetchTasks());
@@ -44,10 +51,19 @@ export default function App() {
                 </p>
               </div>
             </div>
-            <button className='btn btn-primary' onClick={() => setOpen(true)}>
-              <Plus className='mr-2 h-5 w-5' />
-              Add New Task
-            </button>
+            <div className='flex gap-4'>
+              <button className='btn btn-primary' onClick={() => setOpen(true)}>
+                <Plus className='mr-2 h-5 w-5' />
+                Add New Task
+              </button>
+              <button
+                className='btn btn-primary'
+                onClick={() => handleLogout()}
+              >
+                <LogOut className='mr-2 h-5 w-5' />
+                Logout
+              </button>
+            </div>
           </div>
         </div>
       </header>

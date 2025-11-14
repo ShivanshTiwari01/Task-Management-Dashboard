@@ -51,9 +51,7 @@ export const TaskAPI = {
     return data;
   },
   async updateStatus(id: number, status: string) {
-    const { data } = await api.patch(`/update/task/status`, {
-      params: { id, status },
-    });
+    const { data } = await api.patch(`/update/task/status`, { id, status });
     return data;
   },
 };

@@ -1,5 +1,8 @@
 import TaskCard from './TaskCard';
 import { STATUSES } from '../features/tasks/types';
+import { useDispatch } from 'react-redux';
+import { updateTaskStatus } from '../features/tasks/taskSlice';
+import type React from 'react';
 
 const LABELS = {
   todo: 'To Do',
@@ -14,6 +17,27 @@ const STATUS_COLORS = {
 };
 
 export default function TaskBoard({ tasksByStatus }) {
+  const dispatch = useDispatch();
+
+  const allowDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (e: React.DragEvent, toStatus: string) => {
+    e.preventDefault();
+    try {
+      const raw = e.dataTransfer.getData('application/json');
+      if (!raw) return;
+      const { id, status: fromStatus } = JSON.parse(raw || '{}');
+      if (!id) return;
+      if (fromStatus !== toStatus) {
+        dispatch(updateTaskStatus({ id: String(id), status: toStatus }));
+      }
+    } catch (_) {
+      // ignore malformed payloads
+    }
+  };
+
   return (
     <div className='card'>
       <div className='mb-6'>
@@ -42,7 +66,11 @@ export default function TaskBoard({ tasksByStatus }) {
               </div>
 
               {tasks.length === 0 ? (
-                <div className='rounded-lg border-2 border-dashed border-slate-200 bg-slate-50 p-8 text-center'>
+                <div
+                  className='rounded-lg border-2 border-dashed border-slate-200 bg-slate-50 p-8 text-center'
+                  onDragOver={allowDrop}
+                  onDrop={(e) => handleDrop(e, status)}
+                >
                   <svg
                     className='mx-auto h-12 w-12 text-slate-400'
                     fill='none'
@@ -61,7 +89,11 @@ export default function TaskBoard({ tasksByStatus }) {
                   </p>
                 </div>
               ) : (
-                <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+                <div
+                  className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'
+                  onDragOver={allowDrop}
+                  onDrop={(e) => handleDrop(e, status)}
+                >
                   {tasks.map((t) => (
                     <TaskCard key={t.id} task={t} />
                   ))}
